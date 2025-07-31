@@ -7,8 +7,10 @@ import (
 	"main/internal/lib/logger/sl"
 	"main/internal/storage"
 	"os"
+	"main/internal/http-server/middleware/logger"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
 const (
@@ -37,6 +39,13 @@ func main() {
 
 	// TODO: init router: chi (совместим с пакетом net/http), "chi render"
 	router := chi.NewRouter()
+
+	// middleware
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+	router.Use(logger.New(log))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
 
 	// TODO: run server
 }
