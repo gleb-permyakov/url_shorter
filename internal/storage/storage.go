@@ -12,6 +12,7 @@ import (
 
 var (
 	ErrURLNotFound = errors.New("url not found")
+	ErrURLExists = errors.New("url exists or smth")
 )
 
 type Storage struct {
@@ -59,7 +60,7 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 	var id int64
 	err := s.db.QueryRow("INSERT INTO url(url, alias) VALUES($1, $2) RETURNING id", urlToSave, alias).Scan(&id)
 	if err != nil {
-		return 0, fmt.Errorf("%s: %w", op, err)
+		return 0, fmt.Errorf("%s: %w", op, ErrURLExists)
 	}
 	// возвращаем индекс
 	return id, nil

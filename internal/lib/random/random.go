@@ -6,10 +6,10 @@ import (
 )
 
 func NewRandomString(size int) string {
-	rnd := rand.NewSource(time.Now().UnixNano())
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	chars := []rune("QWERTYUIOPASDFGHJKLZXCVBNM" + 
-		"qwertyuiopasdfghjklzxcvbnm" + 
+	chars := []rune("QWERTYUIOPASDFGHJKLZXCVBNM" +
+		"qwertyuiopasdfghjklzxcvbnm" +
 		"1234567890")
 
 	b := make([]rune, size)
@@ -17,5 +17,6 @@ func NewRandomString(size int) string {
 		b[i] = chars[rnd.Intn(len(chars))]
 	}
 
+	return string(b)
 
 }

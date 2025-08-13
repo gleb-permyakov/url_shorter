@@ -1,14 +1,18 @@
 package save
 
 import (
+	"errors"
 	"log/slog"
 	resp "main/internal/lib/api/response"
 	"main/internal/lib/logger/sl"
+	"main/internal/lib/random"
+	"main/internal/storage"
 	"net/http"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
-	"github.com/go-playground/validator"
+
+	// "github.com/go-playground/validator"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -19,7 +23,7 @@ type Request struct {
 
 type Response struct {
 	resp.Response
-	Alias string `json:"alias,omitempty` // omitempty - если может быть пустым. Если пустой - то в итоговом джсон будет отсутствовать
+	Alias string `json:"alias,omitempty"` // omitempty - если может быть пустым. Если пустой - то в итоговом джсон будет отсутствовать
 }
 
 // TODO: alias to config
@@ -64,5 +68,21 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 		if alias == "" {
 			alias = random.NewRandomString(aliasLength)
 		}
+
+		id, err := urlSaver.SaveURL(req.URL, alias)
+		if errors.Is(err, storage.ErrURLExists) {
+			log.Info("url already exists", slog.String("url", req.URL))
+
+			render.JSON(w, r, resp.Error("url already exists"))
+
+			return
+		}
+
+		log.Info("url added", slog.Int64("id", id))
+
+		render.JSON(w, r, Response{
+			Response: resp.OK(),
+			Alias:    alias,
+		})
 	}
 }

@@ -2,13 +2,14 @@ package response
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type Response struct {
-	Status string `json:"status`
-	Error  string `json:"error,omitempty`
+	Status string `json:"status"`
+	Error  string `json:"error,omitempty"`
 }
 
 const (
@@ -45,6 +46,6 @@ func ValidateError(errs validator.ValidationErrors) Response {
 
 	return Response{
 		Status: StatusError,
-		Error: string.Join(errMsgs, ", ")
+		Error: strings.Join(errMsgs, ", "),
 	}
 }
