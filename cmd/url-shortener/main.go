@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"log/slog"
 	"main/internal/config"
+	"main/internal/http-server/handlers/redirect"
 	"main/internal/http-server/handlers/url/save"
 	"main/internal/http-server/middleware/logger"
 	"main/internal/lib/logger/sl"
@@ -47,9 +48,10 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(logger.New(log))
 	router.Use(middleware.Recoverer)
-	router.Use(middleware.URLFormat)
+	router.Use(middleware.URLFormat) 
 
 	router.Post("/url", save.New(log, storage))
+	router.Get("/{alias}", redirect.New(log, storage)) // моем обратиться к alias благодаря middleware.URLFormat
 
 	log.Info("starting server", slog.String("address", cfg.Serv.Address))
 

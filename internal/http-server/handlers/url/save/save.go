@@ -2,6 +2,7 @@ package save
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	resp "main/internal/lib/api/response"
 	"main/internal/lib/logger/sl"
@@ -45,6 +46,9 @@ func New(log *slog.Logger, urlSaver URLSaver) http.HandlerFunc {
 		var req Request
 
 		err := render.DecodeJSON(r.Body, &req)
+
+		fmt.Println(r)
+
 		if err != nil {
 			log.Error("failed to decode request body", sl.Err(err))
 
