@@ -48,19 +48,29 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(logger.New(log))
 	router.Use(middleware.Recoverer)
-	router.Use(middleware.URLFormat) 
+	router.Use(middleware.URLFormat)
 
-	router.Post("/url", save.New(log, storage))
+	// router.Route("/url", func(r chi.Router){
+	// 	r.Use(middleware.BasicAuth("url-shortener", map[string]string{
+	// 		cfg.Serv.User: cfg.Serv.Password,
+	// 	}))
+
+	// 	r.Post("/", save.New(log, storage))
+
+	// })
+
+	router.Post("/", save.New(log, storage))
+
 	router.Get("/{alias}", redirect.New(log, storage)) // моем обратиться к alias благодаря middleware.URLFormat
 
 	log.Info("starting server", slog.String("address", cfg.Serv.Address))
 
 	srv := &http.Server{
-		Addr: cfg.Serv.Address,
-		Handler: router,
-		ReadTimeout: cfg.Serv.Timeout,
+		Addr:         cfg.Serv.Address,
+		Handler:      router,
+		ReadTimeout:  cfg.Serv.Timeout,
 		WriteTimeout: cfg.Serv.Timeout,
-		IdleTimeout: cfg.Serv.IdleTimeout,
+		IdleTimeout:  cfg.Serv.IdleTimeout,
 	}
 
 	if err := srv.ListenAndServe(); err != nil {

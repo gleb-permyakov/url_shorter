@@ -20,7 +20,7 @@ type URLGetter interface {
 func New(log *slog.Logger, urlGetter URLGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const op = "handlers.redirect.new"
-		
+
 		log = log.With(
 			slog.String("op", op),
 			slog.String("request_id", middleware.GetReqID(r.Context())),
@@ -56,5 +56,5 @@ func New(log *slog.Logger, urlGetter URLGetter) http.HandlerFunc {
 
 		http.Redirect(w, r, resUrl, http.StatusFound)
 
-	} 
+	}
 }

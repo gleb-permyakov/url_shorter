@@ -12,7 +12,7 @@ import (
 
 var (
 	ErrURLNotFound = errors.New("url not found")
-	ErrURLExists = errors.New("url exists or smth")
+	ErrURLExists   = errors.New("url exists or smth")
 )
 
 type Storage struct {
@@ -70,7 +70,7 @@ func (s *Storage) GetURL(alias string) (string, error) {
 	const op = "storage.GetUrl"
 	// делаем запрос в бд
 	var orig_url string
-	err := s.db.QueryRow("SELECT url FROM url WHERE alias = '$1'", alias).Scan(&orig_url)
+	err := s.db.QueryRow("SELECT url FROM url WHERE alias = $1", alias).Scan(&orig_url)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return "", ErrURLNotFound
@@ -83,7 +83,7 @@ func (s *Storage) GetURL(alias string) (string, error) {
 
 func (s *Storage) DeleteURL(alias string) error {
 	const op = "storage.DeleteURL"
-	_, err := s.db.Exec("DELETE FROM url WHERE alias = '&1'", alias)
+	_, err := s.db.Exec("DELETE FROM url WHERE alias = $1", alias)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
